@@ -5,6 +5,19 @@ import random
 # ---------------------------- CONSTANTS ------------------------------- #
 BACKGROUND_COLOR = "#B1DDC6"
 FONT_NAME = "Arial"
+timer = None
+
+
+# ---------------------------- TIMER ------------------------------- #
+def count_down(count):
+    global timer
+    canvas.itemconfig(card_timer, text=f'{count}')
+
+    if count > 0:
+        timer = window.after(1000, count_down, count - 1)
+    else:
+        window.after_cancel(timer)
+        canvas.itemconfig(card_timer, text='Did you get it right?', fill='white', font=(FONT_NAME, 26, 'italic'))
 
 
 # ---------------------------- SHOW NEW WORD ------------------------------- #
@@ -29,7 +42,9 @@ def next_word():
     canvas.itemconfig(card_bg, image=card_front_img)
     canvas.itemconfig(card_title, text='French', fill='black')
     canvas.itemconfig(card_word, text=current_card['French'], fill='black')
+    canvas.itemconfig(card_timer, text='', font=(FONT_NAME, 36, 'bold'), fill='black')
 
+    count_down(3)
     flip_timer = window.after(3000, flip_card)
 
 
@@ -40,7 +55,7 @@ def flip_card():
     canvas.itemconfig(card_word, text=current_card['English'], fill='white')
 
 
-# ---------------------------- FLIP CARD ------------------------------- #
+# ---------------------------- UPDATE WORD LIST ------------------------------- #
 def word_known():
     word_list.remove(current_card)
 
@@ -65,6 +80,7 @@ card_bg = canvas.create_image(401, 263, image=card_front_img)
 
 card_title = canvas.create_text(400, 150, text='', font=(FONT_NAME, 40, 'italic'))
 card_word = canvas.create_text(400, 263, text='', font=(FONT_NAME, 60, 'bold'))
+card_timer = canvas.create_text(400, 420, text='', font=(FONT_NAME, 36, 'bold'))
 
 canvas.grid(column=0, row=0, columnspan=2)
 
